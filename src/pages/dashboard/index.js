@@ -25,7 +25,9 @@ const Dashboard = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setLoading(true);
     setNewUser({ ...newUser, [name]: value });
+    setLoading(false);
   };
 
   return (
