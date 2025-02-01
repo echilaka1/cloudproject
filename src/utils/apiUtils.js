@@ -32,9 +32,9 @@ const makeAPICall = async (
     for (const key in payload) {
       formData.append(key, payload[key]);
     }
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    } // check formData if it returns when using image upload
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // } // check formData if it returns when using image upload
     configs.body = formData;
     headers["Content-type"] = "multipart/form-data";
   } else if (payload) {
