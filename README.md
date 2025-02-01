@@ -56,7 +56,7 @@ $ npm start or yarn start
 └─ README.md
 ```
 
-## Building the application
+## Testing and building the application locally
 
 I created an .env file locally to save constant, after creating the env file, add this to the env file: REACT_APP_API_ENDPOINT=http://localhost:3001
 http://localhost:3001 is to be replaced with the endpoint for the backend server.
