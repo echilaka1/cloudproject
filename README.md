@@ -58,15 +58,19 @@ $ npm start or yarn start
 
 ## Building the application
 
-I created an env file locally to save constant e.g. backend url.
-.env which uses ```bash
-$ npm start - to test locally
+I created an .env file locally to save constant, after creating the env file, add this to the env file: REACT_APP_API_ENDPOINT=http://localhost:3001
+http://localhost:3001 is to be replaced with the endpoint for the backend server.
 
-````
+After setting up the env file, run:
+
+```bash
+$ npm start - to test locally
+```
 
 To build the application:
+
 ```bash
 $ npm run build - deploys to production
-````
+```
 
 We can set up other build area based on preference.
