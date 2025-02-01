@@ -156,9 +156,9 @@ export default function Register() {
               <div class="col-md-4">
                 <div class="step-div p-5">
                   <div>
-                    <h1 class="login-welcome mt-5">Welcome Back</h1>
+                    <h1 class="login-welcome mt-5">Sign up for free today</h1>
                     <p class="login-welcome-details">
-                      Signup for cloud service
+                      Start uploading pictures to your s3
                     </p>
                   </div>
                 </div>
