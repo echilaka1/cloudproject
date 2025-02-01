@@ -18,6 +18,7 @@ const AllPages = () => (
           </PrivateRoute>
         }
       />
+      {/* <Route exact path="/dashboard" element={<Dashboard />}></Route> */}
     </Routes>
   </BrowserRouter>
 );
