@@ -6,6 +6,7 @@
 - JavaScript
 - Bootstrap
 - JWT Decode
+- React Password Strength Bar
 
 ## Commands
 
