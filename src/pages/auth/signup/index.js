@@ -16,7 +16,7 @@ export default function Register() {
     password: "",
     passwordTwo: "",
   });
-
+  const [file, setFile] = useState(null);
   const [isMin, setIsMin] = useState(false);
   const [isAlphaNum, setIsAlphNum] = useState(false);
   const [isMatch, setIsMatch] = useState(false);
@@ -26,10 +26,14 @@ export default function Register() {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   function handleChangeInput(event) {
-    setInputValues({
-      ...inputValues,
-      [event.target.name]: event.target.value,
-    });
+    if (event.target.name === "file") {
+      setFile(event.target.files[0]);
+    } else {
+      setInputValues({
+        ...inputValues,
+        [event.target.name]: event.target.value,
+      });
+    }
   }
 
   function signUp() {
@@ -38,6 +42,7 @@ export default function Register() {
       password: inputValues.password,
       firstname: inputValues.first_name,
       lastname: inputValues.last_name,
+      image: file,
     };
     setLoading(true);
     return makeAPICall({
@@ -196,6 +201,16 @@ export default function Register() {
                       />
                     </div>
                     <div>
+                      <h2 className="mb-1">Upload image</h2>
+                      <InputField
+                        type="file"
+                        onChange={handleChangeInput}
+                        className="file-input"
+                        name="file"
+                        accept="image/*"
+                      />
+                    </div>
+                    <div>
                       <h2 className="mb-1">Enter Password</h2>
                       <InputField
                         type="password"
@@ -288,11 +303,12 @@ export default function Register() {
                       onClick={signUp}
                       disabled={
                         !(
-                          inputValues.first_name &&
-                          inputValues.last_name &&
-                          inputValues.email &&
-                          inputValues.password &&
-                          inputValues.passwordTwo
+                          inputValues.first_name.trim() &&
+                          inputValues.last_name.trim() &&
+                          inputValues.email.trim() &&
+                          inputValues.password.trim() &&
+                          inputValues.passwordTwo.trim() &&
+                          file
                         ) || !isAuthorized
                       }
                       style={{ width: "100%", borderRadius: "10px" }}

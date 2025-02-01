@@ -7,11 +7,10 @@ export const getAuthToken = () => window.localStorage.getItem(AUTH_TOKEN);
 const baseURL = process.env.REACT_APP_API_ENDPOINT;
 
 const makeAPICall = async (
-  { path, method = "POST", payload = null, params = null },
+  { path, method = "POST", payload = null },
   customConfigs
 ) => {
   const token = getAuthToken();
-
   const headers = {
     Accept: "application/json, */*",
     "Content-type": "application/json",
@@ -24,30 +23,25 @@ const makeAPICall = async (
     headers,
     ...customConfigs,
   };
-
-  // return console.log(configs);
-
-  if (payload) configs.body = JSON.stringify(payload);
+  if (
+    (path.includes("register") || path.includes("profile")) &&
+    payload &&
+    payload.image
+  ) {
+    const formData = new FormData();
+    for (const key in payload) {
+      formData.append(key, payload[key]);
+    }
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    } // check formData if it returns when using image upload
+    configs.body = formData;
+    headers["Content-type"] = "multipart/form-data";
+  } else if (payload) {
+    configs.body = JSON.stringify(payload);
+  }
 
   let url = new window.URL(`${baseURL}${path}`);
-
-  const buildParams = (data) => {
-    const params = new window.URLSearchParams();
-
-    for (let [key, value] of Object.entries(data)) {
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          params.append(`${key}[]`, item);
-        });
-      } else {
-        params.append(key, value);
-      }
-    }
-
-    return params;
-  };
-
-  if (params) url.search = buildParams(params);
 
   return window
     .fetch(url, configs)

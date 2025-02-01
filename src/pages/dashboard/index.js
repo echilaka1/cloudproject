@@ -2,31 +2,59 @@ import React, { useState } from "react";
 import Button from "../../components/Button";
 import InputField from "../../components/inputField";
 import { logout } from "../../utils/authUtils";
+import makeAPICall from "../../utils/apiUtils";
 
 const Dashboard = () => {
   const [user, setUser] = useState({
     name: "John Doe",
     email: "john.doe@example.com",
-    profileImage: "https://via.placeholder.com/150",
+    profileImage: "https://placehold.co/100",
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState(user);
   const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(user.profileImage);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
   const handleSaveClick = () => {
-    setUser(newUser);
-    setIsEditing(false);
+    setLoading(true);
+    const data = {
+      name: newUser.name,
+      email: newUser.email,
+      image: selectedFile,
+    };
+    return makeAPICall({
+      path: "/profile",
+      payload: data,
+      method: "PUT",
+    })
+      .then((res) => {
+        setUser(newUser);
+        setLoading(false);
+        setIsEditing(false);
+        console.log(res, "profile updated successfully");
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err.message, "profile error");
+      });
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setLoading(true);
-    setNewUser({ ...newUser, [name]: value });
+    const { name, value } = e.target;
+    if (name === "file") {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setNewUser({ ...newUser, [name]: value });
+    }
     setLoading(false);
   };
 
@@ -41,23 +69,26 @@ const Dashboard = () => {
         </div>
         <div className="card mb-4">
           <div className="card-body text-center">
-            <img
-              src={user.profileImage}
-              alt="Profile"
-              className="mb-3"
-              style={{
-                width: "150px",
-                height: "150px",
-                borderRadius: "50%",
-                border: "1px solid #ccc",
-              }}
-            />
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt="Profile"
+                className="mb-3"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "50%",
+                  border: "1px solid #ccc",
+                }}
+              />
+            )}
             {isEditing ? (
               <InputField
-                type="text"
-                name="profileImage"
-                value={newUser.profileImage}
+                type="file"
                 onChange={handleChange}
+                className="file-input"
+                name="file"
+                accept="image/*"
               />
             ) : null}
           </div>
