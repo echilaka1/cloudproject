@@ -24,6 +24,7 @@ export default function Register() {
   const [isLowerCase, setIsLowerCase] = useState(false);
   const [isSpecialCharacter, setIsSpecialCharacter] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   function handleChangeInput(event) {
     if (event.target.name === "file") {
@@ -46,12 +47,21 @@ export default function Register() {
     };
     setLoading(true);
     return makeAPICall({
-      path: "/register",
+      path: "auth/register",
       payload: data,
       method: "POST",
     })
       .then((res) => {
+        setInputValues({
+          first_name: "",
+          last_name: "",
+          email: "",
+          password: "",
+          passwordTwo: "",
+        });
+        setFile(null);
         setLoading(false);
+        setSuccess(true);
         console.log(res, "registering successful");
       })
       .catch((err) => {
@@ -315,6 +325,15 @@ export default function Register() {
                     >
                       {loading ? "Loading" : "Register"}
                     </Button>
+                    <br />
+                    <br />
+                    {success && (
+                      <div className="success-message">
+                        Registration successful! Please click on login below to
+                        login to your account.
+                      </div>
+                    )}
+
                     <div className="text-center mt-3">
                       <p>
                         Already have an account?{" "}

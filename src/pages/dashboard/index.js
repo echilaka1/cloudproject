@@ -1,43 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../../components/Button";
 import InputField from "../../components/inputField";
 import { logout } from "../../utils/authUtils";
 import makeAPICall from "../../utils/apiUtils";
 
 const Dashboard = () => {
-  const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    profileImage: "https://placehold.co/100",
-  });
-
+  const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState(user);
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(user.profileImage);
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  const email = window.localStorage.getItem("email");
 
   const handleEditClick = () => {
+    setNewUser(user);
     setIsEditing(true);
+  };
+
+  const fetchUser = async () => {
+    setLoading(true);
+    return makeAPICall({
+      path: `user/${email}`,
+      method: "GET",
+    })
+      .then((res) => {
+        setUser(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err.message, "profile error");
+      });
   };
 
   const handleSaveClick = () => {
     setLoading(true);
     const data = {
-      name: newUser.name,
-      email: newUser.email,
+      firstname: newUser.firstname,
+      lastname: newUser.lastname,
       image: selectedFile,
     };
     return makeAPICall({
-      path: "/profile",
+      path: `user/${newUser.email}`,
       payload: data,
       method: "PUT",
     })
       .then((res) => {
-        setUser(newUser);
+        fetchUser();
         setLoading(false);
         setIsEditing(false);
-        console.log(res, "profile updated successfully");
       })
       .catch((err) => {
         setLoading(false);
@@ -58,6 +71,11 @@ const Dashboard = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="d-flex justify-content-center">
       <div className="container mt-5" style={{ width: "60%" }}>
@@ -69,9 +87,9 @@ const Dashboard = () => {
         </div>
         <div className="card mb-4">
           <div className="card-body text-center">
-            {previewUrl && (
+            {user?.imageUrl && (
               <img
-                src={previewUrl}
+                src={previewUrl ? previewUrl : user?.imageUrl}
                 alt="Profile"
                 className="mb-3"
                 style={{
@@ -88,6 +106,7 @@ const Dashboard = () => {
                 onChange={handleChange}
                 className="file-input"
                 name="file"
+                // value={newUser?.imageUrl}
                 accept="image/*"
               />
             ) : null}
@@ -95,12 +114,12 @@ const Dashboard = () => {
         </div>
         <div className="card mb-4">
           <div className="card-body">
-            <h2 className="title-text">{user.name}</h2>
+            <h2 className="title-text">First name: {user?.firstname}</h2>
             {isEditing ? (
               <InputField
                 type="text"
-                name="name"
-                value={newUser.name}
+                name="firstname"
+                value={newUser?.firstname}
                 onChange={handleChange}
               />
             ) : null}
@@ -108,12 +127,12 @@ const Dashboard = () => {
         </div>
         <div className="card mb-4">
           <div className="card-body">
-            <h3 className="title-text">{user.email}</h3>
+            <h2 className="title-text">Last name: {user?.lastname}</h2>
             {isEditing ? (
               <InputField
                 type="text"
-                name="email"
-                value={newUser.email}
+                name="lastname"
+                value={newUser?.lastname}
                 onChange={handleChange}
               />
             ) : null}

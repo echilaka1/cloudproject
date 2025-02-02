@@ -27,14 +27,14 @@ export default function Login() {
     };
     setLoading(true);
     return makeAPICall({
-      path: "/login",
+      path: "auth/login",
       payload: data,
       method: "POST",
     })
       .then((res) => {
         setLoading(false);
-        console.log(res, "login successful");
-        window.localStorage.setItem(AUTH_TOKEN, res?.tokens?.access);
+        window.localStorage.setItem("email", inputValues.email);
+        window.localStorage.setItem(AUTH_TOKEN, res?.token);
         const redirectUrl =
           window.sessionStorage.getItem(REDIRECT_URL) ?? "/dashboard";
         history.push(redirectUrl);

@@ -20,6 +20,7 @@ export const isSessionExpired = (token) => {
 
 export const logout = () => {
   window.localStorage.removeItem(AUTH_TOKEN);
+  window.localStorage.removeItem("email");
   history.push("/");
   window.location.reload();
 };

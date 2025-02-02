@@ -23,8 +23,11 @@ const makeAPICall = async (
     headers,
     ...customConfigs,
   };
+  // Use a regular expression to check if the path contains "user/"
+  const isUserPath = /user\//.test(path);
+
   if (
-    (path.includes("register") || path.includes("profile")) &&
+    (path.includes("auth/register") || isUserPath) &&
     payload &&
     payload.image
   ) {
@@ -36,7 +39,7 @@ const makeAPICall = async (
     //   console.log(key, value);
     // } // check formData if it returns when using image upload
     configs.body = formData;
-    headers["Content-type"] = "multipart/form-data";
+    delete headers["Content-type"];
   } else if (payload) {
     configs.body = JSON.stringify(payload);
   }
